@@ -264,7 +264,7 @@ class TestFaults:
 
 
 class TestDelivery:
-    async def test_legacy_service_carries_image_tag_and_flags(
+    async def test_the_service_of_a_selected_device_carries_image_tag_and_flags(
         self, setup_blueprint: Any, printer: Printer
     ) -> None:
         await setup_blueprint()
@@ -284,14 +284,29 @@ class TestDelivery:
             f"/config/www/snapshots/{AUTOMATION_KEY}.jpg"
         )
 
-    async def test_service_name_with_notify_prefix_is_accepted(
+    async def test_every_selected_device_is_notified(
         self, setup_blueprint: Any, printer: Printer
     ) -> None:
-        await setup_blueprint(notify_device="notify.mobile_app_phone")
+        await setup_blueprint(
+            notify_devices=[printer.add_phone("phone"), printer.add_phone("tablet")]
+        )
+        await printer.state(STATUS, "failed")
+        await printer.advance(2)
+
+        assert len(printer.calls.phones["phone"]) == 1
+        assert len(printer.calls.phones["tablet"]) == 1
+
+    async def test_a_device_that_is_not_selected_is_not_notified(
+        self, setup_blueprint: Any, printer: Printer
+    ) -> None:
+        await setup_blueprint()
+        printer.add_phone("someone_else")
+
         await printer.state(STATUS, "failed")
         await printer.advance(2)
 
         assert len(printer.calls.notify) == 1
+        assert printer.calls.phones["someone_else"] == []
 
     async def test_printers_view_becomes_an_action_button(
         self, setup_blueprint: Any, printer: Printer
@@ -305,42 +320,33 @@ class TestDelivery:
             {"action": "URI", "title": "Open Printers", "uri": "/lovelace/3d_printers"}
         ]
 
-    async def test_notify_entities_get_title_and_message_only(
+    async def test_without_devices_only_the_other_outputs_run(
         self, setup_blueprint: Any, printer: Printer
     ) -> None:
         await setup_blueprint(
-            notify_device="", notify_entities=["notify.my_iphone", "notify.my_ipad"]
+            notify_devices=[], fault_actions=[{"action": "test.on_fault"}]
         )
         await printer.state(STATUS, "failed")
         await printer.advance(2)
 
-        assert printer.calls.notify == []
-        [call] = printer.calls.send_message
-        assert call.data["entity_id"] == ["notify.my_iphone", "notify.my_ipad"]
-        assert set(call.data) == {"entity_id", "title", "message"}
+        assert printer.calls.phones == {}
+        assert len(printer.calls.persistent) == 1
+        assert len(printer.calls.on_fault) == 1
 
-    async def test_both_delivery_paths_can_be_used_together(
-        self, setup_blueprint: Any, printer: Printer
-    ) -> None:
-        await setup_blueprint(notify_entities=["notify.my_iphone"])
-        await printer.state(STATUS, "failed")
-        await printer.advance(2)
-
-        assert len(printer.calls.notify) == 1
-        assert len(printer.calls.send_message) == 1
-
-    async def test_a_missing_notify_service_does_not_block_the_other_outputs(
+    async def test_a_device_without_the_legacy_service_does_not_block_the_other_outputs(
         self, setup_blueprint: Any, printer: Printer
     ) -> None:
         await setup_blueprint(
-            notify_device="service_that_does_not_exist",
-            notify_entities=["notify.my_iphone"],
+            notify_devices=[
+                printer.add_phone("phone"),
+                printer.add_phone("no_service", service=False),
+            ],
             fault_actions=[{"action": "test.on_fault"}],
         )
         await printer.state(STATUS, "failed")
         await printer.advance(2)
 
-        assert len(printer.calls.send_message) == 1
+        assert len(printer.calls.notify) == 1
         assert len(printer.calls.persistent) == 1
         assert len(printer.calls.on_fault) == 1
 

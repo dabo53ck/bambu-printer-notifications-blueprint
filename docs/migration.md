@@ -24,8 +24,9 @@ archived. It was based on
 4. Save. Optionally delete the old blueprint under **Settings → Automations &
    Scenes → Blueprints** once nothing uses it.
 
-Input names are unchanged, so your entities, notify service, critical alert
-settings and custom actions carry over.
+Most input names are unchanged, so your entities, critical alert settings and
+custom actions carry over. The notify service is the exception: it is now a
+device picker, see below.
 
 ### Inputs that are gone
 
@@ -37,13 +38,14 @@ automation from loading.
 | ----- | --- |
 | `progress_trigger_threshold` | The stage trigger comes first; the progress fallback is fixed at 100 %. |
 | `cooldown_minutes` | `mode: single` already drops repeated triggers of the same print. |
+| `notify_device` | Replaced by the device picker `notify_devices`, see below. |
 | `tts_enable`, `tts_service`, `tts_media_player`, `tts_volume`, `tts_success_message`, `tts_fault_message`, `tts_quiet_hours_enable`, `tts_quiet_hours_start`, `tts_quiet_hours_end` | Text-to-speech is not part of this blueprint. Use the custom success and fault actions for announcements. |
 
 ### Inputs that are new
 
 | Input | Default |
 | ----- | ------- |
-| `notify_entities` | none |
+| `notify_devices` | none. Replaces `notify_device`: instead of typing a service name such as `mobile_app_your_phone`, pick the phone from the device picker. |
 | `time_format` | `24h` |
 
 ### Things that behave differently

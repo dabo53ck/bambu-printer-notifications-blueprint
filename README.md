@@ -31,7 +31,7 @@ the photo shows the print, not the plate on its way down. See
 | ---- | ------------ |
 | Snapshot | Taken at the earliest reliable end-of-print signal, optionally with a light switched on and restored afterwards. |
 | Message | File, weight, progress and time of day **with seconds**, in 24h or 12h AM/PM. |
-| Delivery | A legacy `notify.<service>` (image, critical alerts, action button) and/or notify entities. Both can be used together. |
+| Delivery | Pick your phones and tablets from a device picker. The notification carries the snapshot image, critical alerts and an "Open Printers" button. |
 | Critical alerts | iOS critical notifications with a time window, separately for success and fault. |
 | Faults | Sticky notification, persistent notification in Home Assistant, and your own actions. |
 | Custom actions | Any Home Assistant actions on success or on fault: indicator lights, smart plugs, scripts, more notifications. |
@@ -105,7 +105,7 @@ cause. Create it once:
 **Settings → Automations & Scenes → Create Automation → Use Blueprint → Bambu
 Printer Notifications.** Map your printer's entities (the pickers only offer
 entities of the Bambu Lab integration), pick an `input_boolean` as the master
-switch and enter your notify service or notify entities.
+switch and pick the phones and tablets to notify.
 
 ---
 
@@ -137,8 +137,7 @@ switch and enter your notify service or notify entities.
 | Input | Default | Description |
 | ----- | ------- | ----------- |
 | Notifications enabled | *required* | `input_boolean` that must be on for anything to be sent. |
-| Notify service (legacy) | *empty* | Name of a notify service, for example `mobile_app_your_phone`, with or without the `notify.` prefix. |
-| Notify entities | *none* | Notify entities that receive title and message through `notify.send_message`. |
+| Devices | *none* | Phones and tablets to notify, picked from your paired Companion App devices. |
 | Time format | 24h | `24h` (`14:05:09`) or `12h` AM/PM (`02:05:09 PM`). Seconds are always shown. |
 | Success type | Normal | Normal / Critical / Never critical |
 | Fault type | Critical | Normal / Critical / Never critical |
@@ -149,19 +148,17 @@ Identical start and end time means **never critical**. For critical around the
 clock use `00:00:00`–`23:59:59`. A window that crosses midnight (`22:00`–`06:00`)
 works.
 
-#### Legacy service or notify entities
+#### How a device becomes a notification
 
-| | Legacy service | Notify entities |
-| - | :-: | :-: |
-| Title and message | yes | yes |
-| Snapshot image | yes | no |
-| Critical alerts (iOS) | yes | no |
-| "Open Printers" button | yes | no |
-| Works without `notify.mobile_app_*` service | no | yes |
+You pick devices, not notify services. For every device the blueprint finds its
+notify entity (`notify.<name>`) and calls the Companion App's notify service of
+the same name (`notify.mobile_app_<name>`). That service carries what
+`notify.send_message` cannot: the snapshot image, critical alerts and the
+"Open Printers" button.
 
-`notify.send_message` cannot carry the extra data that images and critical
-alerts need. If your Companion App only offers a notify entity, you get text
-notifications through that path. Both inputs can be filled at once.
+If a device has no `notify.mobile_app_<name>` service, the call fails and shows
+up in the trace. The persistent notification and your custom actions are not
+affected; devices later in the list are.
 
 ### Critical alert settings
 
@@ -180,7 +177,7 @@ printers.
 
 | Input | Default | Description |
 | ----- | ------- | ----------- |
-| Printers view path | *empty* | Dashboard path such as `/lovelace/3d_printers`. Adds an "Open Printers" button (legacy service only). |
+| Printers view path | *empty* | Dashboard path such as `/lovelace/3d_printers`. Adds an "Open Printers" button. |
 
 ---
 
@@ -207,14 +204,15 @@ second trigger, not a second notification.
 `/config/www/snapshots/` is missing, see [Setup](#1-create-the-snapshot-folder).
 `camera.snapshot` runs with `continue_on_error`, so this is not logged as an error.
 
-**No image with notify entities.**
-`notify.send_message` cannot carry images, see
-[Legacy service or notify entities](#legacy-service-or-notify-entities).
+**"Action notify.mobile_app_xxx not found" in the trace.**
+The device has no Companion App notify service of that name, see
+[How a device becomes a notification](#how-a-device-becomes-a-notification).
+The persistent notification and your custom actions still run. Remove the device
+from *Devices* or fix its notify entity.
 
-**"Action notify.xxx not found" in the trace.**
-The notify service name does not exist. The other outputs (notify entities,
-persistent notification, custom actions) still run; fix the name or leave the
-field empty.
+**No notification arrives, no error.**
+No device is selected, or the selected device has no `notify.*` entity. Open the
+device in Home Assistant and check that it has a notify entity.
 
 **The pickers show no entities.**
 They only offer entities of the Bambu Lab integration. Check that the

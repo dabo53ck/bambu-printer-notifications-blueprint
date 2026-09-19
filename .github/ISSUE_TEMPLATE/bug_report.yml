@@ -30,17 +30,6 @@ body:
         - Other (please say which)
     validations:
       required: true
-  - type: dropdown
-    id: delivery
-    attributes:
-      label: How do you receive notifications?
-      options:
-        - Legacy notify service (mobile_app_...)
-        - Notify entities
-        - Both
-        - Not relevant to this bug
-    validations:
-      required: true
   - type: input
     id: ha_version
     attributes:

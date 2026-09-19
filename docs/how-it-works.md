@@ -51,8 +51,8 @@ those must not look like the end.
 3. **Two seconds** for the remaining sensors to settle.
 4. **Read the final values** for progress, status and weight. The stage trigger
    fires before they are final; without this the message would say 97 %.
-5. **Deliver**: legacy notify service, notify entities, persistent notification
-   (faults) and custom actions run independently of each other.
+5. **Deliver**: the notification to each selected device, the persistent
+   notification (faults) and the custom actions run independently of each other.
 
 ## One run at a time
 

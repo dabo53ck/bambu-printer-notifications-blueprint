@@ -9,15 +9,17 @@ from __future__ import annotations
 
 import asyncio
 import shutil
-from dataclasses import dataclass, field
 from datetime import timedelta
 from pathlib import Path
 from typing import Any
 
 import pytest
 from homeassistant.core import HomeAssistant, ServiceCall
+from homeassistant.helpers import device_registry as dr
+from homeassistant.helpers import entity_registry as er
 from homeassistant.setup import async_setup_component
 from pytest_homeassistant_custom_component.common import (
+    MockConfigEntry,
     async_fire_time_changed,
     async_mock_service,
 )
@@ -54,20 +56,25 @@ REQUIRED_INPUTS = {
     "notifications_enabled_boolean": ENABLED,
     # Zero snapshot delay keeps the clock arithmetic in most tests trivial.
     "snapshot_delay_seconds": 0,
-    "notify_device": "mobile_app_phone",
 }
 
 
-@dataclass
 class Calls:
-    notify: list[ServiceCall] = field(default_factory=list)
-    send_message: list[ServiceCall] = field(default_factory=list)
-    snapshot: list[ServiceCall] = field(default_factory=list)
-    light_on: list[ServiceCall] = field(default_factory=list)
-    light_off: list[ServiceCall] = field(default_factory=list)
-    persistent: list[ServiceCall] = field(default_factory=list)
-    on_success: list[ServiceCall] = field(default_factory=list)
-    on_fault: list[ServiceCall] = field(default_factory=list)
+    """Everything the blueprint asked Home Assistant to do."""
+
+    def __init__(self) -> None:
+        self.phones: dict[str, list[ServiceCall]] = {}
+        self.snapshot: list[ServiceCall] = []
+        self.light_on: list[ServiceCall] = []
+        self.light_off: list[ServiceCall] = []
+        self.persistent: list[ServiceCall] = []
+        self.on_success: list[ServiceCall] = []
+        self.on_fault: list[ServiceCall] = []
+
+    @property
+    def notify(self) -> list[ServiceCall]:
+        """Notifications that reached the default phone."""
+        return self.phones.get("phone", [])
 
 
 class Printer:
@@ -102,12 +109,38 @@ class Printer:
         await self.state(PROGRESS, 100)
         await self.state(STATUS, "finish")
 
+    def add_phone(self, name: str, *, service: bool = True) -> str:
+        """Register a Companion App device and return its device id.
+
+        The app names its notify entity after the device (`notify.<name>`) and
+        the legacy service `notify.mobile_app_<name>`. With ``service=False``
+        the device has the entity but not the service.
+        """
+        entry = MockConfigEntry(domain="mobile_app", title=name)
+        entry.add_to_hass(self.hass)
+        device = dr.async_get(self.hass).async_get_or_create(
+            config_entry_id=entry.entry_id,
+            identifiers={("mobile_app", name)},
+            name=name,
+        )
+        er.async_get(self.hass).async_get_or_create(
+            "notify",
+            "mobile_app",
+            f"{name}-notify",
+            config_entry=entry,
+            device_id=device.id,
+            suggested_object_id=name,
+        )
+        if service:
+            self.calls.phones[name] = async_mock_service(
+                self.hass, "notify", f"mobile_app_{name}"
+            )
+        return device.id
+
 
 @pytest.fixture
 def calls(hass: HomeAssistant) -> Calls:
     recorded = Calls()
-    recorded.notify = async_mock_service(hass, "notify", "mobile_app_phone")
-    recorded.send_message = async_mock_service(hass, "notify", "send_message")
     recorded.snapshot = async_mock_service(hass, "camera", "snapshot")
     recorded.light_on = async_mock_service(hass, "light", "turn_on")
     recorded.light_off = async_mock_service(hass, "light", "turn_off")
@@ -126,7 +159,11 @@ def printer(hass: HomeAssistant, freezer: Any, calls: Calls) -> Printer:
 async def setup_blueprint(
     hass: HomeAssistant, tmp_path: Path, freezer: Any, printer: Printer
 ):
-    """Install the blueprint and create one automation from it."""
+    """Install the blueprint and create one automation from it.
+
+    Unless a test passes its own ``notify_devices``, the automation notifies one
+    phone, ``phone``, whose notifications end up in ``calls.notify``.
+    """
     await hass.config.async_set_time_zone("UTC")
     freezer.move_to("2026-09-19 12:00:00+00:00")
 
@@ -136,6 +173,8 @@ async def setup_blueprint(
         shutil.copy(BLUEPRINT_PATH, target)
         hass.config.config_dir = str(tmp_path)
 
+        if "notify_devices" not in overrides:
+            overrides["notify_devices"] = [printer.add_phone("phone")]
         inputs = {**REQUIRED_INPUTS, **overrides}
 
         hass.states.async_set(STATUS, "running")

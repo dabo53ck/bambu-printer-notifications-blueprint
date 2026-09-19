@@ -19,19 +19,20 @@ if you used the upstream blueprint or the earlier fork.
   update on a P1S, which is before the build plate starts to lower. A progress
   trigger at 100 % and the status triggers remain as fallbacks. See
   [docs/how-it-works.md](docs/how-it-works.md).
-- **Notify entities.** New input *Notify entities* delivers title and message
-  through `notify.send_message`, for setups without a legacy
-  `notify.mobile_app_*` service. The legacy service path is unchanged and still
-  carries the snapshot image, critical alerts and the action button.
+- **Device picker for notifications.** New input *Devices* replaces the free-text
+  notify service of earlier versions. Pick your phones and tablets from your
+  paired Companion App devices; the blueprint finds each device's notify service
+  itself. The notification carries the snapshot image, critical alerts and the
+  action button.
 - **Time of day in every message**, with seconds. New input *Time format*
   (24h or 12h AM/PM, default 24h).
 - **One snapshot file and one notification tag per automation**
   (`/config/www/snapshots/<automation>.jpg`), so several printers or
   automations never overwrite each other. The image URL carries a cache-busting
   query string so the companion app does not show an older photo.
-- **Independent outputs.** The legacy notification, the notify entities, the
-  persistent notification and the custom actions run in separate branches. A
-  notify service that does not exist no longer stops the others.
+- **Independent outputs.** The notifications, the persistent notification and
+  the custom actions run in separate branches. A notify service that does not
+  exist no longer stops the persistent notification or your custom actions.
 - Faults at zero progress are reported (a print that fails while heating).
 - Test suite that runs the blueprint through the real Home Assistant automation
   engine, plus `check_config` against the minimum and the latest Home Assistant.

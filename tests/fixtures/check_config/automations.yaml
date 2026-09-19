@@ -19,9 +19,8 @@
       snapshot_light_brightness: 60
       snapshot_delay_seconds: 2
       notifications_enabled_boolean: input_boolean.bambu_notifications
-      notify_device: mobile_app_phone
-      notify_entities:
-        - notify.phone
+      notify_devices:
+        - 0123456789abcdef0123456789abcdef
       time_format: 12h
       success_notification_type: critical
       success_critical_start: "08:00:00"
