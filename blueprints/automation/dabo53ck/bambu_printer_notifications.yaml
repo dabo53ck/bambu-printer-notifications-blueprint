@@ -44,14 +44,12 @@ blueprint:
           selector:
             entity:
               domain: sensor
-              integration: bambu_lab
         print_error_binary:
           name: Print error binary sensor
           description: Binary sensor that turns on when the printer reports an error.
           selector:
             entity:
               domain: binary_sensor
-              integration: bambu_lab
         current_stage_sensor:
           name: Current stage sensor
           description: >-
@@ -60,41 +58,35 @@ blueprint:
           selector:
             entity:
               domain: sensor
-              integration: bambu_lab
         progress_sensor:
           name: Progress sensor
           description: Print progress in percent.
           selector:
             entity:
               domain: sensor
-              integration: bambu_lab
         printer_name_sensor:
           name: Printer name sensor
           description: Sensor with the printer name. Used in the notification title.
           selector:
             entity:
               domain: sensor
-              integration: bambu_lab
         task_name_sensor:
           name: Task name sensor
           description: Sensor with the name of the current print job.
           selector:
             entity:
               domain: sensor
-              integration: bambu_lab
         print_weight_sensor:
           name: Print weight sensor
           description: Sensor with the print weight in grams.
           selector:
             entity:
               domain: sensor
-              integration: bambu_lab
         camera:
           name: Printer camera
           selector:
             entity:
               domain: camera
-              integration: bambu_lab
 
     snapshot_settings:
       name: Snapshot Settings

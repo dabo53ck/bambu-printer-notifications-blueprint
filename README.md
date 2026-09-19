@@ -103,9 +103,8 @@ cause. Create it once:
 ### 2. Create the automation
 
 **Settings → Automations & Scenes → Create Automation → Use Blueprint → Bambu
-Printer Notifications.** Map your printer's entities (the pickers only offer
-entities of the Bambu Lab integration), pick an `input_boolean` as the master
-switch and enter your notify service or notify entities.
+Printer Notifications.** Map your printer's entities, pick an `input_boolean`
+as the master switch and enter your notify service or notify entities.
 
 ---
 
@@ -215,10 +214,6 @@ second trigger, not a second notification.
 The notify service name does not exist. The other outputs (notify entities,
 persistent notification, custom actions) still run; fix the name or leave the
 field empty.
-
-**The pickers show no entities.**
-They only offer entities of the Bambu Lab integration. Check that the
-integration is set up and the printer is online.
 
 More questions: [Discussions](https://github.com/dabo53ck/bambu-printer-notifications-blueprint/discussions).
 Bugs: [Issues](https://github.com/dabo53ck/bambu-printer-notifications-blueprint/issues).

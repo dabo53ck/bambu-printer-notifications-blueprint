@@ -7,6 +7,7 @@ by hand and what the behaviour tests cannot see:
 * a missing or incomplete ``blueprint:`` metadata block,
 * ``!input`` references without a matching declared input, and the reverse,
 * tuning inputs without a default (only entity pickers may be required),
+* entity pickers filtered by integration (empty while the printer is off),
 * a ``source_url`` that does not point at this file,
 * README / docs links to blueprint files that do not exist,
 * a blueprint version that disagrees with the newest CHANGELOG section.
@@ -113,6 +114,13 @@ def check_blueprint(path: Path) -> tuple[list[str], str | None]:
         selector = definition.get("selector") or {}
         if "default" not in definition and "entity" not in selector:
             errors.append(f"input {name} has no default (only entity pickers may be required)")
+        entity_selector = selector.get("entity") or {}
+        filters = [entity_selector, *(entity_selector.get("filter") or [])]
+        if any(isinstance(f, dict) and "integration" in f for f in filters):
+            errors.append(
+                f"input {name} filters its entity picker by integration; the picker "
+                "comes up empty while the printer is off and its integration is not loaded"
+            )
 
     badge = VERSION_BADGE.search(str(meta.get("description", "")))
     version = badge.group(1).replace("--", "-") if badge else None

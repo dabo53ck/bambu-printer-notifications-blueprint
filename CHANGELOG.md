@@ -48,5 +48,4 @@ if you used the upstream blueprint or the earlier fork.
   is not treated as a finished print.
 - A fault stays a fault when the error flag clears again before the
   notification is built.
-- Entity pickers are limited to the Bambu Lab integration.
 - Minimum Home Assistant version is 2024.10.0.
