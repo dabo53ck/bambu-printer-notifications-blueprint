@@ -26,7 +26,7 @@ if you used the upstream blueprint or the earlier fork.
 - **Time of day in every message**, with seconds. New input *Time format*
   (24h or 12h AM/PM, default 24h).
 - **One snapshot file and one notification tag per automation**
-  (`/config/www/snapshots/bambu_<automation>.jpg`), so several printers or
+  (`/config/www/snapshots/<automation>.jpg`), so several printers or
   automations never overwrite each other. The image URL carries a cache-busting
   query string so the companion app does not show an older photo.
 - **Independent outputs.** The legacy notification, the notify entities, the

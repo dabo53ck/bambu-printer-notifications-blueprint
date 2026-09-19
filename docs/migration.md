@@ -48,7 +48,7 @@ automation from loading.
 
 ### Things that behave differently
 
-- **Snapshot file.** It is now `/config/www/snapshots/bambu_<automation>.jpg`,
+- **Snapshot file.** It is now `/config/www/snapshots/<automation>.jpg`,
   named after the automation instead of the printer. Old files can be deleted.
 - **Notification tag.** Also per automation. Notifications of a new automation do
   not replace those of the old one; disable the old automation.

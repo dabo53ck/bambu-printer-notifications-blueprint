@@ -361,8 +361,8 @@ variables:
   # the same printer (or two printers) never overwrite each other. The query
   # string defeats image caching in the companion app.
   automation_key: "{{ this.entity_id.split('.')[1] }}"
-  snapshot_file: "/config/www/snapshots/bambu_{{ automation_key }}.jpg"
-  snapshot_url: "/local/snapshots/bambu_{{ automation_key }}.jpg?v={{ as_timestamp(now()) | int }}"
+  snapshot_file: "/config/www/snapshots/{{ automation_key }}.jpg"
+  snapshot_url: "/local/snapshots/{{ automation_key }}.jpg?v={{ as_timestamp(now()) | int }}"
   notification_tag: "bambu_print_{{ automation_key }}"
 
 triggers:

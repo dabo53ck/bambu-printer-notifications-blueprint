@@ -84,8 +84,8 @@ The blueprint writes the snapshot to a fixed folder and links to it from a
 fixed URL. For an automation named `automation.p1s_notify`:
 
 ```
-File written by camera.snapshot:  /config/www/snapshots/bambu_p1s_notify.jpg
-URL used in the notification:     /local/snapshots/bambu_p1s_notify.jpg
+File written by camera.snapshot:  /config/www/snapshots/p1s_notify.jpg
+URL used in the notification:     /local/snapshots/p1s_notify.jpg
 ```
 
 Home Assistant serves everything under `/config/www/` at the public path

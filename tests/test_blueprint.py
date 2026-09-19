@@ -275,13 +275,13 @@ class TestDelivery:
         [call] = printer.calls.notify
         data = call.data["data"]
         assert call.data["title"] == "P1S Print Complete"
-        assert data["image"].startswith(f"/local/snapshots/bambu_{AUTOMATION_KEY}.jpg?v=")
+        assert data["image"].startswith(f"/local/snapshots/{AUTOMATION_KEY}.jpg?v=")
         assert data["tag"] == f"bambu_print_{AUTOMATION_KEY}"
         assert data["sticky"] is False
         assert data["persistent"] is False
         assert data["actions"] == []
         assert printer.calls.snapshot[0].data["filename"] == (
-            f"/config/www/snapshots/bambu_{AUTOMATION_KEY}.jpg"
+            f"/config/www/snapshots/{AUTOMATION_KEY}.jpg"
         )
 
     async def test_service_name_with_notify_prefix_is_accepted(
