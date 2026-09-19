@@ -1,0 +1,35 @@
+name: Tests
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  pytest:
+    name: pytest (${{ matrix.name }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Declared minimum (blueprint.homeassistant.min_version)
+          - name: "HA 2024.10"
+            python: "3.12"
+            ha_constraint: "homeassistant>=2024.10.0,<2024.11.0"
+            legacy_josepy: true
+          # Latest stable
+          - name: "HA latest"
+            python: "3.14"
+            ha_constraint: "homeassistant"
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: ${{ matrix.python }}
+      - run: pip install "${{ matrix.ha_constraint }}" pytest-homeassistant-custom-component pyyaml
+      # Home Assistant 2024.10 imports josepy.ComparableX509, removed in josepy 2.
+      - if: matrix.legacy_josepy
+        run: pip install "josepy<2"
+      - run: pytest

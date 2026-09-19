@@ -1,0 +1,41 @@
+# Drives the blueprint with every input set. `check_config` (see
+# .github/workflows/validate.yml) generates the automation from the blueprint,
+# which catches broken templates, selectors and unresolved !input references.
+# A new blueprint input must be added here.
+- alias: Bambu printer notifications (CI fixture)
+  id: bambu_printer_notifications_ci
+  use_blueprint:
+    path: dabo53ck/bambu_printer_notifications.yaml
+    input:
+      print_status_sensor: sensor.p1s_print_status
+      print_error_binary: binary_sensor.p1s_print_error
+      current_stage_sensor: sensor.p1s_current_stage
+      progress_sensor: sensor.p1s_print_progress
+      printer_name_sensor: sensor.p1s_printer_name
+      task_name_sensor: sensor.p1s_task_name
+      print_weight_sensor: sensor.p1s_print_weight
+      camera: camera.p1s_camera
+      snapshot_light: light.p1s_chamber
+      snapshot_light_brightness: 60
+      snapshot_delay_seconds: 2
+      notifications_enabled_boolean: input_boolean.bambu_notifications
+      notify_devices:
+        - 0123456789abcdef0123456789abcdef
+      time_format: 12h
+      success_notification_type: critical
+      success_critical_start: "08:00:00"
+      success_critical_end: "20:00:00"
+      fault_notification_type: never_critical
+      fault_critical_start: "22:00:00"
+      fault_critical_end: "06:00:00"
+      critical_sound: alert
+      critical_volume: 0.5
+      success_actions:
+        - action: persistent_notification.create
+          data:
+            message: print done
+      fault_actions:
+        - action: persistent_notification.create
+          data:
+            message: print failed
+      printers_view_uri: /lovelace/3d_printers

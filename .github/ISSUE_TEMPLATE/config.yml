@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Question / discussion
+    url: https://github.com/dabo53ck/bambu-printer-notifications-blueprint/discussions
+    about: For usage questions and general discussion (not bug reports).
+  - name: Bambu Lab integration issues
+    url: https://github.com/greghesp/ha-bambulab/issues
+    about: Missing or wrong printer entities are a matter for the integration, not this blueprint.

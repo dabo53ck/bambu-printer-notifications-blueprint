@@ -1,0 +1,75 @@
+name: Bug report
+description: The blueprint does not behave as expected
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: >
+        Problems with the printer entities themselves (missing sensors, wrong
+        states) belong to the
+        [Bambu Lab integration](https://github.com/greghesp/ha-bambulab/issues).
+        Everything about this blueprint is welcome here.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: dropdown
+    id: printer
+    attributes:
+      label: Printer model
+      options:
+        - P1S
+        - P1P
+        - X1 / X1C / X1E
+        - A1
+        - A1 mini
+        - H2D
+        - Other (please say which)
+    validations:
+      required: true
+  - type: input
+    id: ha_version
+    attributes:
+      label: Home Assistant version
+    validations:
+      required: true
+  - type: input
+    id: integration_version
+    attributes:
+      label: Bambu Lab integration version
+      description: Shown in HACS.
+    validations:
+      required: true
+  - type: input
+    id: blueprint_version
+    attributes:
+      label: Blueprint version
+      description: Shown in the header of the blueprint description, for example `0.0.1-beta`.
+    validations:
+      required: true
+  - type: textarea
+    id: trace
+    attributes:
+      label: Automation trace
+      description: >
+        Settings → Automations & Scenes → your automation → ⋮ → Traces. Pick the
+        run in question, open **Download trace** and paste the JSON. The trigger
+        and the timestamps are what matters most.
+      render: json
+  - type: textarea
+    id: config
+    attributes:
+      label: Automation configuration
+      description: ⋮ → Edit in YAML. Remove anything private.
+      render: yaml
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues.
+          required: true
+        - label: The folder `/config/www/snapshots/` exists (only needed for snapshot problems).
