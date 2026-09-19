@@ -275,7 +275,8 @@ class TestDelivery:
         [call] = printer.calls.notify
         data = call.data["data"]
         assert call.data["title"] == "P1S Print Complete"
-        assert data["image"].startswith(f"/local/snapshots/{AUTOMATION_KEY}.jpg?v=")
+        # No query string: the iOS Companion App answers such URLs with a 404.
+        assert data["image"] == f"/local/snapshots/{AUTOMATION_KEY}.jpg"
         assert data["tag"] == f"bambu_print_{AUTOMATION_KEY}"
         assert data["sticky"] is False
         assert data["persistent"] is False

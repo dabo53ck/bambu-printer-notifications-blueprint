@@ -357,11 +357,12 @@ variables:
     {{ ns.v | unique | list }}
 
   # One file and one notification tag per automation, so two automations for
-  # the same printer (or two printers) never overwrite each other. The query
-  # string defeats image caching in the companion app.
+  # the same printer (or two printers) never overwrite each other.
+  # The image URL must not carry a query string: the iOS Companion App fails
+  # to load /local/... URLs with one (404, verified on a real device).
   automation_key: "{{ this.entity_id.split('.')[1] }}"
   snapshot_file: "/config/www/snapshots/{{ automation_key }}.jpg"
-  snapshot_url: "/local/snapshots/{{ automation_key }}.jpg?v={{ as_timestamp(now()) | int }}"
+  snapshot_url: "/local/snapshots/{{ automation_key }}.jpg"
   notification_tag: "bambu_print_{{ automation_key }}"
 
 triggers:

@@ -28,8 +28,7 @@ if you used the upstream blueprint or the earlier fork.
   (24h or 12h AM/PM, default 24h).
 - **One snapshot file and one notification tag per automation**
   (`/config/www/snapshots/<automation>.jpg`), so several printers or
-  automations never overwrite each other. The image URL carries a cache-busting
-  query string so the companion app does not show an older photo.
+  automations never overwrite each other.
 - **Independent outputs.** The notifications, the persistent notification and
   the custom actions run in separate branches. A notify service that does not
   exist no longer stops the persistent notification or your custom actions.
