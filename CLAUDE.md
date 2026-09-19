@@ -34,7 +34,6 @@ Tags are `vX.Y.Z` or `vX.Y.Z-beta`; the CHANGELOG heading has no `v`.
 ## Conventions
 
 - Input keys are a public API: never rename or remove one without a CHANGELOG entry and a migration note. New inputs need a `default` (only entity pickers may be required), an entry in the README tables and in `tests/fixtures/check_config/automations.yaml`.
-- Entity pickers filter by `domain` only, never by `integration`: while the printer is off its integration is not loaded and such a picker lists nothing.
 - A behaviour change or bug fix needs a test first. The suite is the specification.
 - Blueprint edits must keep `yamllint`, `scripts/validate_blueprints.py`, `pytest` and `check_config` green.
 - Documents must never link to a blueprint path that does not exist; the validator checks this.
