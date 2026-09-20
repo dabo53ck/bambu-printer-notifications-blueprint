@@ -47,7 +47,7 @@ body:
     id: blueprint_version
     attributes:
       label: Blueprint version
-      description: Shown in the header of the blueprint description, for example `0.0.1-beta`.
+      description: Shown in the header of the blueprint description, for example `v0.0.1-beta`.
     validations:
       required: true
   - type: textarea

@@ -8,7 +8,7 @@ blueprint:
   description: |-
     # Bambu Printer Notifications
 
-    ![Version](https://img.shields.io/badge/version-0.0.1--beta-blue) &nbsp;&nbsp;&nbsp; [![GitHub](https://img.shields.io/badge/GitHub-Repository-black)](https://github.com/dabo53ck/bambu-printer-notifications-blueprint) &nbsp;&nbsp;&nbsp; [![Issues](https://img.shields.io/badge/Issues-red)](https://github.com/dabo53ck/bambu-printer-notifications-blueprint/issues)
+    ![Version](https://img.shields.io/badge/version-v0.0.1--beta-blue) &nbsp;&nbsp;&nbsp; [![GitHub](https://img.shields.io/badge/GitHub-Repository-black)](https://github.com/dabo53ck/bambu-printer-notifications-blueprint) &nbsp;&nbsp;&nbsp; [![Issues](https://img.shields.io/badge/Issues-red)](https://github.com/dabo53ck/bambu-printer-notifications-blueprint/issues)
 
     Sends a notification with a camera snapshot when a Bambu Lab printer finishes a print or faults.
 
