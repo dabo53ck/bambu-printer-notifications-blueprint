@@ -32,8 +32,8 @@ DOCS = [ROOT / "README.md", ROOT / "CHANGELOG.md", *sorted((ROOT / "docs").glob(
 BLUEPRINT_LINK = re.compile(
     r"blueprints(?:/|%2F)automation(?:/|%2F)([\w-]+)(?:/|%2F)([\w-]+\.yaml)"
 )
-VERSION_BADGE = re.compile(r"badge/version-([\w.]+(?:--[\w.]+)*)-")
-CHANGELOG_HEADING = re.compile(r"^## \[v?([\w.-]+)\]", re.MULTILINE)
+VERSION_BADGE = re.compile(r"badge/version-(v[\w.]+(?:--[\w.]+)*)-")
+CHANGELOG_HEADING = re.compile(r"^## \[(v[\w.-]+)\]", re.MULTILINE)
 
 
 class Tagged:
@@ -117,7 +117,7 @@ def check_blueprint(path: Path) -> tuple[list[str], str | None]:
     badge = VERSION_BADGE.search(str(meta.get("description", "")))
     version = badge.group(1).replace("--", "-") if badge else None
     if version is None:
-        errors.append("description has no version badge (badge/version-X-blue)")
+        errors.append("description has no version badge (badge/version-vX.Y.Z-blue)")
     return errors, version
 
 

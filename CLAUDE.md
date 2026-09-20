@@ -23,11 +23,11 @@ plus its tests, docs and CI. Not a Python package. The root
 
 ## Releases
 
-Tags are `vX.Y.Z` or `vX.Y.Z-beta`; the CHANGELOG heading has no `v`.
+Versions are written `vX.Y.Z` or `vX.Y.Z-beta`, always with the `v`: in the tag, the GitHub release title, the CHANGELOG heading and the blueprint badge.
 
-1. One PR `dev` → `main` with the version bumped in the blueprint description badge and the CHANGELOG heading (`## [X.Y.Z-beta] - <release date>`). `scripts/validate_blueprints.py` fails if the two disagree.
+1. One PR `dev` → `main` with the version bumped in the blueprint description badge (`badge/version-vX.Y.Z--beta-blue`) and the CHANGELOG heading (`## [vX.Y.Z-beta] - <release date>`). `scripts/validate_blueprints.py` fails if the two disagree.
 2. Merge, then tag `vX.Y.Z-beta` on `main`.
-3. GitHub release from the CHANGELOG section. **Not marked as pre-release**, marked as **Latest**, also for `-beta` versions: `gh release create vX.Y.Z-beta --latest --notes-file …`.
+3. GitHub release from the CHANGELOG section, titled `vX.Y.Z-beta` like the tag. **Not marked as pre-release**, marked as **Latest**, also for `-beta` versions: `gh release create vX.Y.Z-beta --title vX.Y.Z-beta --latest --notes-file …`.
 4. Delete `dev` (local and remote).
 5. Re-import the blueprint once from `main` on the live Home Assistant (an import from `dev` stamps that URL as `source_url`).
 

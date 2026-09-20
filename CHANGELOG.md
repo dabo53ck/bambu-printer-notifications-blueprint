@@ -2,9 +2,9 @@
 
 All notable changes to this project are documented here. The format loosely
 follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). SemVer,
-pre-release identifiers included (`0.0.1-beta`, …).
+pre-release identifiers included (`v0.0.1-beta`, …).
 
-## [0.0.1-beta] - 2026-09-19
+## [v0.0.1-beta] - 2026-09-19
 
 First release as a standalone project. It continues the work of an earlier
 fork of [HallyAus/homeassistant-bambu-blueprints](https://github.com/HallyAus/homeassistant-bambu-blueprints),
