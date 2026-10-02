@@ -12,3 +12,7 @@ htmlcov/
 .idea/
 .vscode/
 .claude/settings.local.json
+
+# Local assistant notes: never published
+CLAUDE.md
+.claude/
