@@ -4,6 +4,10 @@ on:
   push:
     branches: [main, dev]
   pull_request:
+  # Weekly run: catches a new Home Assistant release that breaks the
+  # blueprint even when nothing was pushed (validate.yml does the same).
+  schedule:
+    - cron: "0 4 * * 1"
   workflow_dispatch:
 
 jobs:
