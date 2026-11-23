@@ -18,6 +18,7 @@ from homeassistant.core import HomeAssistant, ServiceCall
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
 from homeassistant.setup import async_setup_component
+from homeassistant.util import slugify
 from pytest_homeassistant_custom_component.common import (
     MockConfigEntry,
     async_fire_time_changed,
@@ -109,31 +110,52 @@ class Printer:
         await self.state(PROGRESS, 100)
         await self.state(STATUS, "finish")
 
-    def add_phone(self, name: str, *, service: bool = True) -> str:
+    def add_phone(
+        self,
+        name: str,
+        *,
+        service: bool = True,
+        push: bool = True,
+        entity_object_id: str | None = None,
+        name_by_user: str | None = None,
+    ) -> str:
         """Register a Companion App device and return its device id.
 
-        The app names its notify entity after the device (`notify.<name>`) and
-        the legacy service `notify.mobile_app_<name>`. With ``service=False``
-        the device has the entity but not the service.
+        Like the app, the device is named after the registration, which also
+        names the legacy service: `notify.mobile_app_<slugified name>`. The
+        notify entity starts as `notify.<slugified name>`; ``entity_object_id``
+        renames it and ``name_by_user`` renames the device, neither of which
+        changes the service. A device without ``push`` has neither the entity
+        nor the service; with ``service=False`` it keeps the entity only.
         """
+        slug = slugify(name)
         entry = MockConfigEntry(domain="mobile_app", title=name)
         entry.add_to_hass(self.hass)
-        device = dr.async_get(self.hass).async_get_or_create(
+        devices = dr.async_get(self.hass)
+        device = devices.async_get_or_create(
             config_entry_id=entry.entry_id,
-            identifiers={("mobile_app", name)},
+            identifiers={("mobile_app", slug)},
             name=name,
         )
-        er.async_get(self.hass).async_get_or_create(
-            "notify",
-            "mobile_app",
-            f"{name}-notify",
-            config_entry=entry,
-            device_id=device.id,
-            suggested_object_id=name,
-        )
-        if service:
+        if name_by_user is not None:
+            devices.async_update_device(device.id, name_by_user=name_by_user)
+        if push:
+            entities = er.async_get(self.hass)
+            entity = entities.async_get_or_create(
+                "notify",
+                "mobile_app",
+                f"{slug}-notify",
+                config_entry=entry,
+                device_id=device.id,
+                suggested_object_id=slug,
+            )
+            if entity_object_id is not None:
+                entities.async_update_entity(
+                    entity.entity_id, new_entity_id=f"notify.{entity_object_id}"
+                )
+        if push and service:
             self.calls.phones[name] = async_mock_service(
-                self.hass, "notify", f"mobile_app_{name}"
+                self.hass, "notify", slugify(f"mobile_app_{name}")
             )
         return device.id
 

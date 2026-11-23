@@ -351,6 +351,41 @@ class TestDelivery:
         assert len(printer.calls.persistent) == 1
         assert len(printer.calls.on_fault) == 1
 
+    async def test_a_renamed_device_or_notify_entity_is_still_notified(
+        self, setup_blueprint: Any, printer: Printer
+    ) -> None:
+        """The legacy service follows the registered device name, not the
+        notify entity id or the name given in Home Assistant."""
+        await setup_blueprint(
+            notify_devices=[
+                printer.add_phone(
+                    "iPhone 15 Pro",
+                    entity_object_id="my_phone",
+                    name_by_user="My phone",
+                )
+            ]
+        )
+        await printer.state(STATUS, "failed")
+        await printer.advance(2)
+
+        assert len(printer.calls.phones["iPhone 15 Pro"]) == 1
+
+    async def test_a_device_without_push_support_is_skipped(
+        self, setup_blueprint: Any, printer: Printer
+    ) -> None:
+        await setup_blueprint(
+            notify_devices=[
+                printer.add_phone("no_push", push=False),
+                printer.add_phone("phone"),
+            ],
+            fault_actions=[{"action": "test.on_fault"}],
+        )
+        await printer.state(STATUS, "failed")
+        await printer.advance(2)
+
+        assert len(printer.calls.notify) == 1
+        assert len(printer.calls.on_fault) == 1
+
     async def test_success_custom_actions_run(
         self, setup_blueprint: Any, printer: Printer
     ) -> None:

@@ -8,7 +8,7 @@ blueprint:
   description: |-
     # Bambu Printer Notifications
 
-    ![Version](https://img.shields.io/badge/version-v0.0.1--beta-blue) &nbsp;&nbsp;&nbsp; [![GitHub](https://img.shields.io/badge/GitHub-Repository-black)](https://github.com/dabo53ck/bambu-printer-notifications-blueprint) &nbsp;&nbsp;&nbsp; [![Issues](https://img.shields.io/badge/Issues-red)](https://github.com/dabo53ck/bambu-printer-notifications-blueprint/issues)
+    ![Version](https://img.shields.io/badge/version-v0.0.2-blue) &nbsp;&nbsp;&nbsp; [![GitHub](https://img.shields.io/badge/GitHub-Repository-black)](https://github.com/dabo53ck/bambu-printer-notifications-blueprint) &nbsp;&nbsp;&nbsp; [![Issues](https://img.shields.io/badge/Issues-red)](https://github.com/dabo53ck/bambu-printer-notifications-blueprint/issues)
 
     Sends a notification with a camera snapshot when a Bambu Lab printer finishes a print or faults.
 
@@ -343,16 +343,19 @@ variables:
   has_success_actions: "{{ success_actions not in [none, ''] and success_actions | length > 0 }}"
   has_fault_actions: "{{ fault_actions not in [none, ''] and fault_actions | length > 0 }}"
 
-  # The Companion App names its legacy notify service after the notify entity
-  # of the device: notify.<slug> -> notify.mobile_app_<slug>.
+  # The Companion App names its legacy notify service after the device name
+  # it registered with: notify.mobile_app_<slugified name>. That is the
+  # device's original name, which renaming the device in Home Assistant
+  # (name_by_user) or its notify entity does not change. Only devices with a
+  # notify entity get the service: the app creates both only for a device
+  # that supports push notifications.
   notify_services: >-
     {% set ns = namespace(v=[]) %}
     {% for device in notify_devices %}
-      {% for entity in device_entities(device) %}
-        {% if entity.startswith('notify.') %}
-          {% set ns.v = ns.v + ['mobile_app_' ~ entity.split('.')[1]] %}
-        {% endif %}
-      {% endfor %}
+      {% set registered_name = device_attr(device, 'name') %}
+      {% if registered_name and device_entities(device) | select('match', 'notify\\.') | list %}
+        {% set ns.v = ns.v + [('mobile_app_' ~ registered_name) | slugify] %}
+      {% endif %}
     {% endfor %}
     {{ ns.v | unique | list }}
 
