@@ -6,6 +6,11 @@ pre-release identifiers included (`v0.0.1-beta`, …).
 
 ## [v0.0.2] - 2026-11-23
 
+First release without the beta label. Since v0.0.1-beta the blueprint has been
+in use on a P1S, and this release fixes the problem that came up in that time.
+Other printer models are still untested; reports are welcome in
+[#3](https://github.com/dabo53ck/bambu-printer-notifications-blueprint/issues/3).
+
 ### Fixed
 
 - **Notifications to a renamed Companion App device.** The notify service was
