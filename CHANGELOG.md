@@ -4,6 +4,18 @@ All notable changes to this project are documented here. The format loosely
 follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). SemVer,
 pre-release identifiers included (`v0.0.1-beta`, …).
 
+## [v0.0.2-beta] - 2026-11-23
+
+### Fixed
+
+- **Notifications to a renamed Companion App device.** The notify service was
+  derived from the device's notify entity id, so renaming that entity (or the
+  device, which can rename its entities) made the automation call a service that
+  does not exist ("unknown action notify.mobile_app_…"). It is now derived from
+  the device name the app registered with, which is what the app itself uses
+  for `notify.mobile_app_<name>`. Devices without a notify entity (no push
+  support) are skipped as before. No input changes; nothing to migrate.
+
 ## [v0.0.1-beta] - 2026-09-19
 
 First release as a standalone project. It continues the work of an earlier

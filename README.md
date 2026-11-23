@@ -150,14 +150,16 @@ works.
 
 #### How a device becomes a notification
 
-You pick devices, not notify services. For every device the blueprint finds its
-notify entity (`notify.<name>`) and calls the Companion App's notify service of
-the same name (`notify.mobile_app_<name>`). That service carries what
-`notify.send_message` cannot: the snapshot image, critical alerts and the
-"Open Printers" button.
+You pick devices, not notify services. For every device with a notify entity
+the blueprint calls the Companion App's notify service, which the app names
+after the device name it registered with: `notify.mobile_app_<device name>`
+(slugified, e.g. *iPhone 17 Pro* becomes `notify.mobile_app_iphone_17_pro`).
+Renaming the device or its notify entity in Home Assistant does not change that
+name. The service carries what `notify.send_message` cannot: the snapshot
+image, critical alerts and the "Open Printers" button.
 
-If a device has no `notify.mobile_app_<name>` service, the call fails and shows
-up in the trace. The persistent notification and your custom actions are not
+If a device has no `notify.mobile_app_<device name>` service, the call fails
+and shows up in the trace. The persistent notification and your custom actions are not
 affected; devices later in the list are.
 
 ### Critical alert settings
@@ -208,7 +210,8 @@ second trigger, not a second notification.
 The device has no Companion App notify service of that name, see
 [How a device becomes a notification](#how-a-device-becomes-a-notification).
 The persistent notification and your custom actions still run. Remove the device
-from *Devices* or fix its notify entity.
+from *Devices*. If the app was registered again under another name, it is a new
+device: select that one instead.
 
 **No notification arrives, no error.**
 No device is selected, or the selected device has no `notify.*` entity. Open the
