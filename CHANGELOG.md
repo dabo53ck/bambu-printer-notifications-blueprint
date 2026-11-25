@@ -4,6 +4,20 @@ All notable changes to this project are documented here. The format loosely
 follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). SemVer,
 pre-release identifiers included (`v0.0.1-beta`, …).
 
+## [v0.0.3] - 2026-11-25
+
+### Fixed
+
+- **The notification showed the image of an earlier print.** Every print wrote
+  its snapshot to the same file, and Home Assistant serves `/local/` with a
+  one-month cache header, so the Companion App could show its cached copy
+  instead of the new photo. Each print now gets its own file,
+  `/config/www/snapshots/<automation>_<YYYYMMDD>_<HHMMSS>.jpg`, and with it a
+  new URL. The files are not deleted; see
+  [Create the snapshot folder](README.md#1-create-the-snapshot-folder) for how
+  to clear out old ones. The old `/config/www/snapshots/<automation>.jpg` is no
+  longer written and can be deleted. No input changes.
+
 ## [v0.0.2] - 2026-11-23
 
 First release without the beta label. Since v0.0.1-beta the blueprint has been

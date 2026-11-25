@@ -59,7 +59,7 @@ test it on your Home Assistant without copying files:
 1. Import the blueprint from the branch, once:
    `https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https://github.com/dabo53ck/bambu-printer-notifications-blueprint/blob/dev/blueprints/automation/dabo53ck/bambu_printer_notifications.yaml`
 2. Create a second automation from it next to your working one and disable the
-   working one for the test. Snapshot file and notification tag are per
+   working one for the test. Snapshot files and notification tag are per
    automation, so they do not collide, but you would get two notifications.
 3. Per iteration: push to `dev`, then **Settings → Automations & Scenes →
    Blueprints → ⋮ → Re-import blueprint**, reload automations, and start a print.
