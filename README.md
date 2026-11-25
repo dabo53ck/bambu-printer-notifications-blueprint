@@ -215,7 +215,7 @@ second trigger, not a second notification.
 
 **The image shows an earlier print.**
 Up to v0.0.2 every print reused one file name, and the Companion App showed its
-cached copy of an earlier print. Since v0.0.3 every print has its own file.
+cached copy of an earlier print. Since v0.1.0 every print has its own file.
 Files left over from earlier versions (`/config/www/snapshots/<automation>.jpg`)
 can be deleted.
 
