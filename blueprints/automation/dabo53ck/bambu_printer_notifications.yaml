@@ -25,7 +25,7 @@ blueprint:
     • **Time of day with seconds** in every message, 24h or 12h AM/PM
     • **Persistent notification** on faults
     • **Custom actions** on success and on fault
-    • **Per-automation snapshot file** — several printers or automations never overwrite each other
+    • **One snapshot file per print** — a new image URL every time, and several printers or automations never overwrite each other
 
     </details>
 
