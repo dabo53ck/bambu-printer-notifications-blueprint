@@ -276,14 +276,43 @@ class TestDelivery:
         data = call.data["data"]
         assert call.data["title"] == "P1S Print Complete"
         # No query string: the iOS Companion App answers such URLs with a 404.
-        assert data["image"] == f"/local/snapshots/{AUTOMATION_KEY}.jpg"
+        # The trigger time in the name gives every print its own URL.
+        assert data["image"] == (
+            f"/local/snapshots/{AUTOMATION_KEY}_20260919_120000.jpg"
+        )
         assert data["tag"] == f"bambu_print_{AUTOMATION_KEY}"
         assert data["sticky"] is False
         assert data["persistent"] is False
         assert data["actions"] == []
         assert printer.calls.snapshot[0].data["filename"] == (
-            f"/config/www/snapshots/{AUTOMATION_KEY}.jpg"
+            f"/config/www/snapshots/{AUTOMATION_KEY}_20260919_120000.jpg"
         )
+
+    async def test_every_print_gets_its_own_snapshot_url(
+        self, setup_blueprint: Any, printer: Printer
+    ) -> None:
+        # Home Assistant serves /local/ with a one-month cache header, so a URL
+        # that repeats lets the Companion App show the previous print's image.
+        await setup_blueprint()
+        await printer.state(STAGE, "idle")
+        await printer.finish_print()
+        await printer.advance(2)
+
+        await printer.state(STATUS, "running")
+        await printer.state(PROGRESS, 50)
+        await printer.state(STAGE, "printing")
+        await printer.advance(3600)
+        await printer.state(STAGE, "idle")
+        await printer.finish_print()
+        await printer.advance(2)
+
+        images = [call.data["data"]["image"] for call in printer.calls.notify]
+        files = [call.data["filename"] for call in printer.calls.snapshot]
+        assert len(images) == 2
+        assert images[0] != images[1]
+        assert [
+            image.replace("/local/", "/config/www/", 1) for image in images
+        ] == files
 
     async def test_every_selected_device_is_notified(
         self, setup_blueprint: Any, printer: Printer

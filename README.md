@@ -35,7 +35,7 @@ the photo shows the print, not the plate on its way down. See
 | Critical alerts | iOS critical notifications with a time window, separately for success and fault. |
 | Faults | Sticky notification, persistent notification in Home Assistant, and your own actions. |
 | Custom actions | Any Home Assistant actions on success or on fault: indicator lights, smart plugs, scripts, more notifications. |
-| Several printers | One automation per printer. Snapshot file and notification tag are per automation. |
+| Several printers | One automation per printer. Snapshot files and notification tag are per automation. |
 
 ---
 
@@ -80,16 +80,23 @@ Coming from the upstream blueprint or an earlier version of this fork? See
 
 ### 1. Create the snapshot folder
 
-The blueprint writes the snapshot to a fixed folder and links to it from a
-fixed URL. For an automation named `automation.p1s_notify`:
+The blueprint writes one snapshot per print to a fixed folder, named after the
+automation and the time the print ended. For an automation named
+`automation.p1s_notify` and a print that ended on 25 November 2026 at 09:14:32:
 
 ```
-File written by camera.snapshot:  /config/www/snapshots/p1s_notify.jpg
-URL used in the notification:     /local/snapshots/p1s_notify.jpg
+File written by camera.snapshot:  /config/www/snapshots/p1s_notify_20261125_091432.jpg
+URL used in the notification:     /local/snapshots/p1s_notify_20261125_091432.jpg
 ```
 
 Home Assistant serves everything under `/config/www/` at the public path
-`/local/`, which is why the two paths differ but point at the same file.
+`/local/`, which is why the two paths differ but point at the same file. It
+also tells apps to cache those files for a month, so every print needs a new
+name: with a fixed name the Companion App would keep showing an older print.
+
+The files are not deleted (a blueprint cannot delete files), at roughly 100 KB
+per print. Clear out old ones now and then, for example in the terminal:
+`find /config/www/snapshots -name '*.jpg' -mtime +30 -delete`.
 
 **Home Assistant does not create the folder.** If it is missing, `camera.snapshot`
 fails without stopping the automation: the notification arrives with a broken
@@ -205,6 +212,12 @@ second trigger, not a second notification.
 **The notification has a broken image.**
 `/config/www/snapshots/` is missing, see [Setup](#1-create-the-snapshot-folder).
 `camera.snapshot` runs with `continue_on_error`, so this is not logged as an error.
+
+**The image shows an earlier print.**
+Up to v0.0.2 every print reused one file name, and the Companion App showed its
+cached copy of an earlier print. Since v0.1.0 every print has its own file.
+Files left over from earlier versions (`/config/www/snapshots/<automation>.jpg`)
+can be deleted.
 
 **"Action notify.mobile_app_xxx not found" in the trace.**
 The device has no Companion App notify service of that name, see
